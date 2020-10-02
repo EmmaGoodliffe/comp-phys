@@ -1,0 +1,41 @@
+{
+  "name": "comp-phys",
+  "version": "1.0.0",
+  "description": "Computational Physics",
+  "main": "index.js",
+  "scripts": {
+    "build": "parcel build ./src/index.html",
+    "eslint:fix": "npm run eslint -- --fix",
+    "eslint": "eslint \"./src/**/*.ts\"",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "lint": "npm run eslint && npm run prettier",
+    "prettier:base": "prettier \"./?(*(.github)/**/)*.{json,md}\"",
+    "prettier:fix": "npm run prettier:base -- --write",
+    "prettier": "npm run prettier:base -- --check",
+    "start": "parcel ./src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmmaGoodliffe/comp-phys.git"
+  },
+  "author": "Emma Goodliffe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EmmaGoodliffe/comp-phys/issues"
+  },
+  "homepage": "https://github.com/EmmaGoodliffe/comp-phys#readme",
+  "devDependencies": {
+    "@types/p5": "^0.9.1",
+    "@typescript-eslint/eslint-plugin": "^4.3.0",
+    "@typescript-eslint/parser": "^4.3.0",
+    "eslint": "^7.10.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "p5": "^1.1.9"
+  }
+}
