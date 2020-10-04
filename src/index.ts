@@ -1,11 +1,18 @@
 import p5 from "p5";
+import Particle from "./Particle";
 
-const s = new p5(() => {});
+const _ = new p5(() => {});
 
-s.setup = () => {
-  s.createCanvas(400, 400);
+const p = new Particle(_);
+
+_.setup = () => {
+  _.createCanvas(400, 400);
+  _.angleMode("degrees");
+  p.s.y = 200;
 };
 
-s.draw = () => {
-  s.background(52);
+_.draw = () => {
+  _.background(32);
+  p.update();
+  p.draw();
 };

@@ -1,0 +1,88 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class Particle {
+  constructor(sketch, m = 1) {
+    this.m = m;
+    const _ = sketch;
+    this._ = _;
+    this.s = _.createVector();
+    this.v = _.createVector();
+    this.a = _.createVector();
+    this.w = 20 * m;
+    this.hue = 192;
+  }
+
+  update() {
+    const {
+      _
+    } = this;
+    this.v.add(this.a);
+    this.s.add(this.v);
+    this.a = _.createVector();
+  }
+
+  draw() {
+    const {
+      _,
+      s,
+      a,
+      w,
+      hue
+    } = this;
+
+    const strokeCol = _.color(`hsl(${hue}, 100%, 50%)`);
+
+    _.stroke(strokeCol);
+
+    _.strokeWeight(2);
+
+    const fillCol = _.color(`hsla(${hue}, 100%, 50%, 0.5)`);
+
+    _.fill(fillCol);
+
+    _.circle(s.x, s.y, w);
+
+    _.strokeWeight(3);
+
+    const arrowLine = a.copy().setMag(1.5 * w);
+    const arrowTips = [createArrowTip(_, arrowLine, 1), createArrowTip(_, arrowLine, -1)];
+
+    _.line(s.x, s.y, s.x + arrowLine.x, s.y + arrowLine.y);
+
+    for (const tip of arrowTips) {
+      const absAL = _p.default.Vector.add(s, arrowLine);
+
+      _.line(absAL.x, absAL.y, absAL.x + tip.x, absAL.y + tip.y);
+    }
+  }
+
+}
+
+exports.default = Particle;
+
+const createArrowTip = (_, arrowLine, direction) => {
+  const baseR = arrowLine.mag();
+
+  const baseTheta = _.atan(arrowLine.y / arrowLine.x);
+
+  const thetaAdjustment = 45 * direction;
+  const theta = baseTheta + 180 + thetaAdjustment;
+  const r = baseR / 4;
+
+  const x = r * _.cos(theta);
+
+  const y = r * _.sin(theta);
+
+  const tip = _.createVector(x, y);
+
+  return tip;
+};

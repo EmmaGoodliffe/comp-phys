@@ -1,0 +1,28 @@
+"use strict";
+
+var _p = _interopRequireDefault(require("p5"));
+
+var _Particle = _interopRequireDefault(require("./Particle"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const _ = new _p.default(() => {});
+
+const p = new _Particle.default(_);
+
+_.setup = () => {
+  _.createCanvas(400, 400);
+
+  _.angleMode(_.de);
+
+  p.s.y = 200;
+};
+
+_.draw = () => {
+  _.background(32);
+
+  p.a = _.createVector(0.01, 0);
+  p.update();
+  p.a = _.createVector(0.01, 0);
+  p.draw();
+};
