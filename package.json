@@ -2,7 +2,6 @@
   "name": "comp-phys",
   "version": "1.0.0",
   "description": "Computational Physics",
-  "main": "index.js",
   "scripts": {
     "build": "parcel build ./src/index.html",
     "dev": "parcel serve ./src/index.html",
