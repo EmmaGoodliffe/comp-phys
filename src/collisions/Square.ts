@@ -14,14 +14,14 @@ export default class Square {
     return this.x + this.w > other.x;
   }
   bounce(other: Square): number {
-    let diffM = this.m - other.m;
+    const diffM = this.m - other.m;
     // v = (dm * v1) + (2 * p2)
     //     --------------------
     //     m1 + m2
-    let p2 = other.m * other.v;
-    let numerator = diffM * this.v + 2 * p2;
-    let denominator = this.m + other.m;
-    let fraction = numerator / denominator;
+    const p2 = other.m * other.v;
+    const numerator = diffM * this.v + 2 * p2;
+    const denominator = this.m + other.m;
+    const fraction = numerator / denominator;
     return fraction;
   }
   draw(_: p5): void {

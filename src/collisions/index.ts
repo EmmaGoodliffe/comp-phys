@@ -40,8 +40,8 @@ _.draw = () => {
   for (let i = 0; i < timeSteps; i++) {
     // If they are colliding, bounce them off each other
     if (squares[0].colliding(squares[1])) {
-      let v1 = squares[0].bounce(squares[1]);
-      let v2 = squares[1].bounce(squares[0]);
+      const v1 = squares[0].bounce(squares[1]);
+      const v2 = squares[1].bounce(squares[0]);
       squares[0].v = v1;
       squares[1].v = v2;
       collisions++;
