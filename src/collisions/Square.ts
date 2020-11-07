@@ -10,20 +10,18 @@ export default class Square {
   update(): void {
     this.x += this.v;
   }
-  collide(other: Square): boolean {
-    const overlapping = this.x + this.w > other.x;
-    return overlapping;
+  colliding(other: Square): boolean {
+    return this.x + this.w > other.x;
   }
   bounce(other: Square): number {
-    const sumM = this.m + other.m;
-    const diffM = this.m - other.m;
+    let diffM = this.m - other.m;
     // v = (dm * v1) + (2 * p2)
     //     --------------------
     //     m1 + m2
-    const p2 = other.m * other.v;
-    const numerator = diffM * this.v + 2 * p2;
-    const denominator = sumM;
-    const fraction = numerator / denominator;
+    let p2 = other.m * other.v;
+    let numerator = diffM * this.v + 2 * p2;
+    let denominator = this.m + other.m;
+    let fraction = numerator / denominator;
     return fraction;
   }
   draw(_: p5): void {
