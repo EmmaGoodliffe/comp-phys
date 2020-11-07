@@ -8,8 +8,8 @@ const particles: Particle[] = [];
 _.setup = () => {
   _.createCanvas(600, 600);
   _.angleMode("degrees");
-  for (let i = 0; i < 3; i++) {
-    particles.push(new Particle(_, 1));
+  for (let i = 0; i < 12; i++) {
+    particles.push(new Particle(_, Math.random() * 10));
   }
 };
 
@@ -23,6 +23,7 @@ _.draw = () => {
       attractors: particles,
       widthToMassRatio: 10,
       lengthToAccelerationRatio: 10 ** 5,
+      maxSpeed: 3,
     });
     p.draw();
   }

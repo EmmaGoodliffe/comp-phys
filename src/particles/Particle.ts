@@ -7,6 +7,7 @@ interface Inputs {
   attractors: Particle[];
   widthToMassRatio: number;
   lengthToAccelerationRatio: number;
+  maxSpeed: number;
 }
 
 export default class Particle {
@@ -16,6 +17,7 @@ export default class Particle {
   w: number;
   hue: number;
   arrow: Arrow;
+  highlight: boolean;
   constructor(public _: p5, public m = 1) {
     const x = _.random(1, _.width);
     const y = _.random(1, _.height);
@@ -25,15 +27,11 @@ export default class Particle {
     this.w = m;
     this.hue = Math.floor(_.random(0, 360));
     this.arrow = new Arrow(_, this.s, this.a);
+    this.highlight = false;
   }
   applyForce(force: p5.Vector): void {
     const a = p5.Vector.div(force, this.m);
     this.a.add(a);
-  }
-  private constrain() {
-    const { _, s } = this;
-    s.x = _.constrain(s.x, 0, _.width);
-    s.y = _.constrain(s.y, 0, _.height);
   }
   private bounce() {
     const { _, s, v, w } = this;
@@ -88,16 +86,23 @@ export default class Particle {
     this.arrow = new Arrow(_, this.s, this.a);
     this.v.add(this.a);
     this.bounce();
-    this.v.setMag(_.constrain(this.v.mag(), 0, 3));
+    if (this.v.mag() > inputs.maxSpeed) {
+      this.v.setMag(inputs.maxSpeed);
+      this.highlight = true;
+    } else {
+      this.highlight = false;
+    }
+    // this.v.setMag(_.constrain(this.v.mag(), 0, inputs.maxSpeed));
     this.s.add(this.v);
     this.a = _.createVector(0, 0);
   }
   draw(): void {
     const { _, s, w } = this;
-    const strokeCol = _.color(`hsl(${this.hue}, 100%, 50%)`);
+    const hue = this.highlight ? 0.1 : this.hue;
+    const strokeCol = _.color(`hsl(${hue}, 100%, 50%)`);
     _.stroke(strokeCol);
     _.strokeWeight(2);
-    const fillCol = _.color(`hsla(${this.hue}, 100%, 50%, 0.5)`);
+    const fillCol = _.color(`hsla(${hue}, 100%, 50%, 0.5)`);
     _.fill(fillCol);
     _.circle(s.x, s.y, w);
     _.strokeWeight(3);
