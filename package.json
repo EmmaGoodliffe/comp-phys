@@ -9,7 +9,7 @@
     "eslint": "eslint \"src/**/*.ts\"",
     "lint:fix": "npm run eslint:fix && npm run prettier:fix",
     "lint": "npm run eslint && npm run prettier",
-    "prettier:base": "prettier \"**\" --ignore-path .gitignore",
+    "prettier:base": "prettier \"./!(dist)/**\" --ignore-path .gitignore --ignore-unknown",
     "prettier:fix": "npm run prettier:base -- --write",
     "prettier": "npm run prettier:base -- --check"
   },
