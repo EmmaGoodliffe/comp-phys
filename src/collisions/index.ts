@@ -41,7 +41,7 @@ _.setup = () => {
 };
 
 _.draw = () => {
-  _.background(255);
+  _.background(32);
   for (let i = 0; i < timeSteps; i++) {
     // If they are colliding, bounce them off each other
     if (squares[0].collide(squares[1])) {
@@ -60,11 +60,10 @@ _.draw = () => {
     squares[0].update();
     squares[1].update();
   }
+  _.noStroke();
   // Draw squares
   squares[0].draw(_);
   squares[1].draw(_);
-  // Draw wall
-  _.line(0, 0, 0, _.height);
   // Show number of collisions
   _.fill(255);
   div.html(`Number of collisions: ${collisions}`);

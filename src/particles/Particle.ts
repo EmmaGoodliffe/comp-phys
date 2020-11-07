@@ -23,7 +23,7 @@ export default class Particle {
     this.v = _.createVector(0, 0);
     this.a = _.createVector(0, 0);
     this.w = m;
-    this.hue = 192;
+    this.hue = Math.floor(_.random(0, 360));
     this.arrow = new Arrow(_, this.s, this.a);
   }
   applyForce(force: p5.Vector): void {
@@ -44,6 +44,8 @@ export default class Particle {
     if (s.y - radius <= 0 || s.y + radius >= _.height) {
       v.y *= -1;
     }
+    this.s.x = _.constrain(this.s.x, radius, _.width - radius);
+    this.s.y = _.constrain(this.s.y, radius, _.height - radius);
   }
   private getGravitationalAttraction(
     attractor: { s: p5.Vector; m: number },
