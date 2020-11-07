@@ -25,28 +25,23 @@ const start = () => {
 
 _.setup = () => {
   _.createCanvas(400, 400);
-  // Create 2 squares
   start();
-  // Create div for displaying number of collisions
   div = _.createDiv();
-  // Create div for display slider value
   sliderValDiv = _.createDiv();
-  // Create slider
   slider = _.createSlider(0, 8, 0);
-  // Create start button
   startButton = _.createButton("Start");
   startButton.mousePressed(start);
-  // Create div for displaying time steps
   timeStepsDiv = _.createDiv();
 };
 
 _.draw = () => {
   _.background(32);
+  _.noStroke();
   for (let i = 0; i < timeSteps; i++) {
     // If they are colliding, bounce them off each other
-    if (squares[0].collide(squares[1])) {
-      const v1 = squares[0].bounce(squares[1]);
-      const v2 = squares[1].bounce(squares[0]);
+    if (squares[0].colliding(squares[1])) {
+      let v1 = squares[0].bounce(squares[1]);
+      let v2 = squares[1].bounce(squares[0]);
       squares[0].v = v1;
       squares[1].v = v2;
       collisions++;
@@ -60,7 +55,6 @@ _.draw = () => {
     squares[0].update();
     squares[1].update();
   }
-  _.noStroke();
   // Draw squares
   squares[0].draw(_);
   squares[1].draw(_);
