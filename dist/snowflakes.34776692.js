@@ -32527,7 +32527,7 @@ var global = arguments[3];
     }]
   }, {}, [17])(17);
 });
-},{}],"particles/Particle.ts":[function(require,module,exports) {
+},{}],"snowflakes/Particle.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -32545,193 +32545,53 @@ var p5_1 = __importDefault(require("p5"));
 var Particle =
 /** @class */
 function () {
-  function Particle(_, m) {
-    if (m === void 0) {
-      m = 1;
-    }
-
+  function Particle(_, s) {
     this._ = _;
-    this.m = m;
-
-    var x = _.random(1, _.width);
-
-    var y = _.random(1, _.height);
-
-    this.s = _.createVector(x, y);
-    this.v = _.createVector(0, 0);
-    this.a = _.createVector(0, 0);
-    this.w = m;
-    this.hue = Math.floor(_.random(0, 360));
-    this.arrow = new Arrow(_, this.s, this.a);
-    this.highlight = false;
+    this.s = s;
+    this.r = 5;
   }
 
-  Particle.prototype.applyForce = function (force) {
-    var a = p5_1.default.Vector.div(force, this.m);
-    this.a.add(a);
-  };
-
-  Particle.prototype.bounce = function () {
-    var _a = this,
-        _ = _a._,
-        s = _a.s,
-        v = _a.v,
-        w = _a.w;
-
-    var radius = w / 2;
-
-    if (s.x - radius <= 0 || s.x + radius >= _.width) {
-      v.x *= -1;
+  Particle.prototype.shouldStop = function (snowflake) {
+    if (this.s.x < 0) {
+      return true;
     }
 
-    if (s.y - radius <= 0 || s.y + radius >= _.height) {
-      v.y *= -1;
-    }
+    var result = false;
 
-    this.s.x = _.constrain(this.s.x, radius, _.width - radius);
-    this.s.y = _.constrain(this.s.y, radius, _.height - radius);
-  };
+    for (var _i = 0, snowflake_1 = snowflake; _i < snowflake_1.length; _i++) {
+      var other = snowflake_1[_i];
+      var distance = p5_1.default.Vector.dist(this.s, other.s);
 
-  Particle.prototype.getGravitationalAttraction = function (attractor, G) {
-    var displacement = p5_1.default.Vector.sub(attractor.s, this.s);
-    var distance = displacement.mag();
-    var magnitude = G * attractor.m * this.m / Math.pow(distance, 2);
-
-    if (magnitude === Infinity || distance < 10) {
-      return false;
-    } else {
-      var forceAttractorOnParticle = displacement.setMag(magnitude);
-      return forceAttractorOnParticle;
-    }
-  };
-
-  Particle.prototype.update = function (inputs) {
-    var _ = this._;
-    var g = inputs.g,
-        G = inputs.G;
-
-    var forceEarthOnParticle = _.createVector(0, 1).setMag(this.m * g);
-
-    this.applyForce(forceEarthOnParticle);
-
-    var mouseS = _.createVector(_.mouseX, _.mouseY);
-
-    var forceMouseOnParticle = this.getGravitationalAttraction({
-      s: mouseS,
-      m: inputs.mouseMass
-    }, G);
-    forceMouseOnParticle && this.applyForce(forceMouseOnParticle);
-
-    for (var _i = 0, _a = inputs.attractors; _i < _a.length; _i++) {
-      var attractor = _a[_i];
-      var forceAttractorOnParticle = this.getGravitationalAttraction(attractor, G);
-
-      if (forceAttractorOnParticle) {
-        forceAttractorOnParticle.setMag(_.constrain(forceAttractorOnParticle.mag(), -1, 1));
-        this.applyForce(forceAttractorOnParticle);
+      if (distance < 2 * this.r) {
+        result = true;
+        break;
       }
     }
 
-    this.w = this.m * inputs.widthToMassRatio;
-    this.arrow = new Arrow(_, this.s, this.a);
-    this.v.add(this.a);
-    this.bounce();
+    return result;
+  };
 
-    if (this.v.mag() > inputs.maxSpeed) {
-      this.v.setMag(inputs.maxSpeed);
-      this.highlight = true;
-    } else {
-      this.highlight = false;
-    } // this.v.setMag(_.constrain(this.v.mag(), 0, inputs.maxSpeed));
-
-
-    this.s.add(this.v);
-    this.a = _.createVector(0, 0);
+  Particle.prototype.update = function () {
+    var _ = this._;
+    this.s.x += -1;
+    this.s.y += _.random(-1, 1);
   };
 
   Particle.prototype.draw = function () {
-    var _a = this,
-        _ = _a._,
-        s = _a.s,
-        w = _a.w;
+    var _ = this._;
 
-    var hue = this.highlight ? 0.1 : this.hue;
+    _.stroke(255);
 
-    var strokeCol = _.color("hsl(" + hue + ", 100%, 50%)");
+    _.fill(255, 200);
 
-    _.stroke(strokeCol);
-
-    _.strokeWeight(2);
-
-    var fillCol = _.color("hsla(" + hue + ", 100%, 50%, 0.5)");
-
-    _.fill(fillCol);
-
-    _.circle(s.x, s.y, w);
-
-    _.strokeWeight(3);
-
-    this.arrow.draw();
+    _.circle(this.s.x, this.s.y, 2 * this.r);
   };
 
   return Particle;
 }();
 
 exports.default = Particle;
-
-var Arrow =
-/** @class */
-function () {
-  function Arrow(_, s, a) {
-    this._ = _;
-    this.s = s;
-    this.line = a.copy().setMag(20);
-    this.tips = [this.createTip(1), this.createTip(-1)];
-  }
-
-  Arrow.prototype.createTip = function (direction) {
-    var _ = this._;
-    var baseR = this.line.mag();
-
-    var baseTheta = _.atan(this.line.y / this.line.x);
-
-    var thetaAdjustment = 45 * direction;
-    var theta = baseTheta + 180 + thetaAdjustment;
-
-    if (this.line.x < 0) {
-      theta += 180;
-    }
-
-    var r = baseR / 4;
-
-    var x = r * _.cos(theta);
-
-    var y = r * _.sin(theta);
-
-    var tip = _.createVector(x, y);
-
-    return tip;
-  };
-
-  Arrow.prototype.draw = function () {
-    var _a = this,
-        _ = _a._,
-        s = _a.s;
-
-    var absLine = p5_1.default.Vector.add(s, this.line);
-
-    _.line(s.x, s.y, absLine.x, absLine.y);
-
-    for (var _i = 0, _b = this.tips; _i < _b.length; _i++) {
-      var tip = _b[_i];
-
-      _.line(absLine.x, absLine.y, absLine.x + tip.x, absLine.y + tip.y);
-    }
-  };
-
-  return Arrow;
-}();
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"particles/index.ts":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"snowflakes/index.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -32750,36 +32610,34 @@ var Particle_1 = __importDefault(require("./Particle"));
 
 var _ = new p5_1.default(function () {});
 
-var particles = [];
+var snowflake = [];
+var p;
 
 _.setup = function () {
   _.createCanvas(600, 600);
 
-  _.angleMode("degrees");
-
-  for (var i = 0; i < 12; i++) {
-    particles.push(new Particle_1.default(_, Math.random() * 10));
-  }
+  p = new Particle_1.default(_, _.createVector(_.width / 2, 0));
 };
 
 _.draw = function () {
-  _.background(32);
+  _.background(52);
 
-  for (var _i = 0, particles_1 = particles; _i < particles_1.length; _i++) {
-    var p = particles_1[_i];
-    p.update({
-      G: 10,
-      g: 0,
-      mouseMass: 0,
-      attractors: particles,
-      widthToMassRatio: 10,
-      lengthToAccelerationRatio: Math.pow(10, 5),
-      maxSpeed: 3
-    });
-    p.draw();
+  _.translate(_.width / 2, _.height / 2);
+
+  p.update();
+  p.draw();
+
+  if (p.shouldStop(snowflake)) {
+    snowflake.push(p);
+    p = new Particle_1.default(_, _.createVector(_.width / 2, 0));
+  }
+
+  for (var _i = 0, snowflake_1 = snowflake; _i < snowflake_1.length; _i++) {
+    var other = snowflake_1[_i];
+    other.draw();
   }
 };
-},{"p5":"../node_modules/p5/lib/p5.min.js","./Particle":"particles/Particle.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js","./Particle":"snowflakes/Particle.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -32983,5 +32841,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","particles/index.ts"], null)
-//# sourceMappingURL=/particles.21457be1.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","snowflakes/index.ts"], null)
+//# sourceMappingURL=/snowflakes.34776692.js.map
