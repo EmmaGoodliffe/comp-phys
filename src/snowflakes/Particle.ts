@@ -1,12 +1,9 @@
 import p5 from "p5";
 
 export default class Particle {
-  r: number;
-  constructor(public _: p5, public s: p5.Vector) {
-    this.r = 5;
-  }
+  constructor(public _: p5, public s: p5.Vector, public r: number) {}
   shouldStop(snowflake: Particle[]): boolean {
-    if (this.s.x < 0) {
+    if (this.s.x < 1) {
       return true;
     }
     let result = false;
@@ -19,10 +16,16 @@ export default class Particle {
     }
     return result;
   }
-  update(): void {
+  update(chaos: number): void {
     const { _ } = this;
     this.s.x += -1;
-    this.s.y += _.random(-1, 1);
+    this.s.y += _.random(-chaos, chaos);
+
+    const magnitude = this.s.mag();
+    let theta = this.s.heading();
+    theta = _.constrain(theta, 0, (2 * Math.PI) / 12);
+    this.s = p5.Vector.fromAngle(theta);
+    this.s.setMag(magnitude);
   }
   draw(): void {
     const { _ } = this;

@@ -32545,14 +32545,14 @@ var p5_1 = __importDefault(require("p5"));
 var Particle =
 /** @class */
 function () {
-  function Particle(_, s) {
+  function Particle(_, s, r) {
     this._ = _;
     this.s = s;
-    this.r = 5;
+    this.r = r;
   }
 
   Particle.prototype.shouldStop = function (snowflake) {
-    if (this.s.x < 0) {
+    if (this.s.x < 1) {
       return true;
     }
 
@@ -32571,10 +32571,15 @@ function () {
     return result;
   };
 
-  Particle.prototype.update = function () {
+  Particle.prototype.update = function (chaos) {
     var _ = this._;
     this.s.x += -1;
-    this.s.y += _.random(-1, 1);
+    this.s.y += _.random(-chaos, chaos);
+    var magnitude = this.s.mag();
+    var theta = this.s.heading();
+    theta = _.constrain(theta, 0, 2 * Math.PI / 12);
+    this.s = p5_1.default.Vector.fromAngle(theta);
+    this.s.setMag(magnitude);
   };
 
   Particle.prototype.draw = function () {
@@ -32612,7 +32617,9 @@ var _ = new p5_1.default(function () {});
 
 var settings = {
   reflect: true,
-  rotate: true
+  rotate: true,
+  velocityChaos: 3,
+  radius: 5
 };
 var snowflake = [];
 var p;
@@ -32620,7 +32627,7 @@ var p;
 _.setup = function () {
   _.createCanvas(600, 600);
 
-  p = new Particle_1.default(_, _.createVector(_.width / 2, 0));
+  p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
 };
 
 _.draw = function () {
@@ -32628,12 +32635,18 @@ _.draw = function () {
 
   _.translate(_.width / 2, _.height / 2);
 
-  p.update();
+  _.rotate(2 * Math.PI / 12);
 
-  if (p.shouldStop(snowflake)) {
-    snowflake.push(p);
-    p = new Particle_1.default(_, _.createVector(_.width / 2, 0));
+  var n = 0;
+
+  while (!p.shouldStop(snowflake)) {
+    p.update(settings.velocityChaos);
+    n++;
   }
+
+  n === 0 && _.noLoop();
+  snowflake.push(p);
+  p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
 
   for (var i = 0; i < (settings.rotate ? 6 : 1); i++) {
     settings.rotate && _.rotate(2 * Math.PI / 6);
@@ -32686,7 +32699,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49964" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51430" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
