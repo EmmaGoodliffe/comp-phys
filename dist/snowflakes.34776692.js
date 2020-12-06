@@ -32616,60 +32616,112 @@ var Particle_1 = __importDefault(require("./Particle"));
 var _ = new p5_1.default(function () {});
 
 var settings = {
-  reflect: true,
-  rotate: true,
-  velocityChaos: 3,
-  radius: 5
+  reflect: false,
+  rotate: false,
+  chaos: 3,
+  radius: 5,
+  fast: false
 };
 var snowflake = [];
 var p;
+var chaosInput;
+var chaosDiv;
+var radiusInput;
+var radiusDiv;
+
+var restart = function restart() {
+  snowflake = [];
+  p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
+};
 
 _.setup = function () {
   _.createCanvas(600, 600);
+
+  var reflectInput = _.createCheckbox("Reflect");
+
+  reflectInput.mouseClicked(function () {
+    return settings.reflect = reflectInput.checked();
+  });
+
+  var rotateInput = _.createCheckbox("Rotate");
+
+  rotateInput.mouseClicked(function () {
+    return settings.rotate = rotateInput.checked();
+  });
+  chaosDiv = _.createDiv().addClass("slider-value");
+  chaosInput = _.createSlider(1, 6, settings.chaos);
+
+  _.createElement("br");
+
+  radiusDiv = _.createDiv().addClass("slider-value");
+  radiusInput = _.createSlider(1, 8, settings.radius);
+
+  var fastInput = _.createCheckbox("Fast");
+
+  fastInput.mouseClicked(function () {
+    return settings.fast = fastInput.checked();
+  });
+
+  _.createButton("Restart").mouseClicked(restart);
 
   p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
 };
 
 _.draw = function () {
-  _.background(52);
+  _.background(32);
 
   _.translate(_.width / 2, _.height / 2);
 
-  _.rotate(2 * Math.PI / 12);
+  if (!settings.fast) {
+    p.update(settings.chaos);
+    p.draw();
 
-  var n = 0;
+    if (p.shouldStop(snowflake)) {
+      snowflake.push(p);
+      p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
+    }
+  } else {
+    _.rotate(2 * Math.PI / 12);
 
-  while (!p.shouldStop(snowflake)) {
-    p.update(settings.velocityChaos);
-    n++;
+    var n = 0;
+
+    while (!p.shouldStop(snowflake)) {
+      p.update(settings.chaos);
+      n++;
+    }
+
+    if (n > 0) {
+      snowflake.push(p);
+      p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
+    }
   }
-
-  n === 0 && _.noLoop();
-  snowflake.push(p);
-  p = new Particle_1.default(_, _.createVector(_.width / 2, 0), settings.radius);
 
   for (var i = 0; i < (settings.rotate ? 6 : 1); i++) {
     settings.rotate && _.rotate(2 * Math.PI / 6);
-    p.draw();
 
     for (var _i = 0, snowflake_1 = snowflake; _i < snowflake_1.length; _i++) {
       var other = snowflake_1[_i];
       other.draw();
     }
 
-    _.push();
+    if (settings.reflect) {
+      _.push();
 
-    _.scale(1, -1);
+      _.scale(1, -1);
 
-    p.draw();
+      for (var _a = 0, snowflake_2 = snowflake; _a < snowflake_2.length; _a++) {
+        var other = snowflake_2[_a];
+        other.draw();
+      }
 
-    for (var _a = 0, snowflake_2 = snowflake; _a < snowflake_2.length; _a++) {
-      var other = snowflake_2[_a];
-      other.draw();
+      _.pop();
     }
-
-    _.pop();
   }
+
+  settings.chaos = chaosInput.value();
+  settings.radius = radiusInput.value();
+  chaosDiv.html("Max. random y value: " + settings.chaos);
+  radiusDiv.html("Radius: " + settings.radius);
 };
 },{"p5":"../node_modules/p5/lib/p5.min.js","./Particle":"snowflakes/Particle.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -32699,7 +32751,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51430" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51778" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
