@@ -32527,7 +32527,7 @@ var global = arguments[3];
     }]
   }, {}, [17])(17);
 });
-},{}],"orbits/index.ts":[function(require,module,exports) {
+},{}],"orbits/Particle.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -32542,14 +32542,222 @@ Object.defineProperty(exports, "__esModule", {
 
 var p5_1 = __importDefault(require("p5"));
 
+var Particle =
+/** @class */
+function () {
+  function Particle(_, x, y, r) {
+    this._ = _;
+    this.r = r;
+    this.s = _.createVector(x, y);
+    this.v = _.createVector();
+    this.a = _.createVector();
+    this.m = 1;
+  }
+
+  Particle.prototype.applyForce = function (force) {
+    this.a.add(p5_1.default.Vector.div(force, this.m));
+  };
+
+  Particle.prototype.update = function () {
+    this.v.add(this.a);
+    this.s.add(this.v);
+    this.a.mult(0);
+  };
+
+  Particle.prototype.draw = function () {
+    var _ = this._;
+
+    _.fill(255);
+
+    _.noStroke();
+
+    _.circle(this.s.x, this.s.y, 2 * this.r);
+  };
+
+  return Particle;
+}();
+
+exports.default = Particle;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"orbits/index.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var p5_1 = __importDefault(require("p5"));
+
+var Particle_1 = __importDefault(require("./Particle"));
+
 var _ = new p5_1.default(function () {});
 
-_.setup = function () {
-  _.createCanvas(400, 400);
+var w = 1200;
+var h = 800;
+var EarthR = w / 8;
+var fontSize = 32;
+var textBoxSize = 200;
+var starPositions = Array(200).fill(_.createVector()).map(function () {
+  return _.createVector(_.random(-w, w), _.random(-h, h));
+}); // Some off-screen
 
-  _.background(0);
+var target = {
+  minX: -100,
+  maxX: 100,
+  minY: -w / 3,
+  maxY: -EarthR + 50
 };
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var sleigh = new Particle_1.default(_, 0, 0, 10);
+var phase = "pause";
+var text;
+var globeImage;
+var sleighImage;
+var halfOrbitIsComplete;
+
+var areOverlapping = function areOverlapping(s1, r1, s2, r2) {
+  var distance = p5_1.default.Vector.dist(s1, s2);
+  return distance < r1 + r2;
+};
+
+var restart = function restart() {
+  var x = 0;
+  var y = -(EarthR + sleigh.r + 20);
+  sleigh.s = _.createVector(x, y);
+  text = "";
+  halfOrbitIsComplete = false;
+};
+
+var stars = function stars() {
+  _.stroke(255);
+
+  _.strokeWeight(4);
+
+  for (var _i = 0, starPositions_1 = starPositions; _i < starPositions_1.length; _i++) {
+    var s = starPositions_1[_i];
+
+    _.point(s.x, s.y);
+  }
+};
+
+_.preload = function () {
+  globeImage = _.loadImage("./globe.png");
+  sleighImage = _.loadImage("./sleigh.png");
+};
+
+_.setup = function () {
+  _.createCanvas(w, h);
+
+  _.angleMode("degrees");
+
+  _.imageMode("center");
+
+  restart();
+};
+
+_.draw = function () {
+  _.background(52);
+
+  _.translate(w / 2, h / 2);
+
+  stars();
+
+  _.fill(0, 0, 255);
+
+  _.noStroke(); // _.circle(0, 0, 2 * EarthR);
+
+
+  _.image(globeImage, 0, 0, 2 * EarthR, 2 * EarthR);
+
+  _.fill(255, 255, 0, 100);
+
+  var targetW = target.maxX - target.minX;
+  var targetH = target.maxY - target.minY;
+
+  _.rect(target.minX, target.minY, targetW, targetH);
+
+  _.fill(255);
+
+  _.textSize(fontSize);
+
+  _.textAlign("center");
+
+  _.text(text, -textBoxSize, -fontSize / 2, 2 * textBoxSize, textBoxSize);
+
+  var sleighToEarth = p5_1.default.Vector.mult(sleigh.s, -1);
+  sleigh.applyForce(sleighToEarth.setMag(0.01));
+
+  if (phase === "pause") {
+    _.stroke(255);
+
+    var mouseS = _.createVector(_.mouseX - w / 2, _.mouseY - h / 2); // Account for translation
+
+
+    sleigh.v = p5_1.default.Vector.sub(mouseS, sleigh.s).mult(0.04);
+
+    _.strokeWeight(4);
+
+    if (text === "") {
+      _.line(sleigh.s.x, sleigh.s.y, mouseS.x, mouseS.y);
+    }
+  } else if (phase === "play") {
+    sleigh.update();
+
+    var EarthS = _.createVector(0, 0);
+
+    var isCrashed = areOverlapping(EarthS, EarthR, sleigh.s, sleigh.r);
+
+    if (isCrashed) {
+      text = "CRASHED!";
+      phase = "pause";
+      setTimeout(restart, 2000);
+    }
+
+    var isXInTarget = target.minX < sleigh.s.x && sleigh.s.x < target.maxX;
+    var isYInTarget = target.minY < sleigh.s.y && sleigh.s.y < target.maxY;
+    var isInTarget = isXInTarget && isYInTarget;
+
+    if (isInTarget && halfOrbitIsComplete) {
+      text = "SUCCESS!";
+      phase = "pause";
+      setTimeout(restart, 2000);
+    }
+
+    if (sleigh.s.y > EarthR) {
+      halfOrbitIsComplete = true;
+      console.log("HALF ORBIT!");
+    }
+  }
+
+  sleigh.draw();
+
+  _.push();
+
+  var theta = _.atan(sleigh.s.y / sleigh.s.x) + 90;
+
+  if (sleigh.s.x < 0) {
+    theta += 180;
+  }
+
+  _.translate(sleigh.s.x, sleigh.s.y);
+
+  _.rotate(theta);
+
+  _.image(sleighImage, 0, 0, 200, 200);
+
+  _.pop();
+};
+
+_.mouseClicked = function () {
+  if (phase === "pause") {
+    phase = "play";
+  }
+};
+},{"p5":"../node_modules/p5/lib/p5.min.js","./Particle":"orbits/Particle.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -32577,7 +32785,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50072" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55096" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

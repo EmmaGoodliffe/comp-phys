@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Computational Physics",
   "scripts": {
-    "build": "npx rimraf dist && parcel build \"src/**/index.html\" --public-url \"/comp-phys/dist\"",
-    "dev": "parcel serve \"src/**/index.html\"",
+    "build": "npx rimraf dist && parcel build \"src/**/*.{html,png}\" --public-url \"/comp-phys/dist\"",
+    "dev": "parcel serve \"src/**/*.{html,png}\"",
     "eslint:fix": "npm run eslint -- --fix",
     "eslint": "eslint \"src/**/*.ts\"",
     "lint:fix": "npm run eslint:fix && npm run prettier:fix",
