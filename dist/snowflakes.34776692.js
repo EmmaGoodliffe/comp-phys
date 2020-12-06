@@ -32610,6 +32610,10 @@ var Particle_1 = __importDefault(require("./Particle"));
 
 var _ = new p5_1.default(function () {});
 
+var settings = {
+  reflect: true,
+  rotate: true
+};
 var snowflake = [];
 var p;
 
@@ -32625,16 +32629,33 @@ _.draw = function () {
   _.translate(_.width / 2, _.height / 2);
 
   p.update();
-  p.draw();
 
   if (p.shouldStop(snowflake)) {
     snowflake.push(p);
     p = new Particle_1.default(_, _.createVector(_.width / 2, 0));
   }
 
-  for (var _i = 0, snowflake_1 = snowflake; _i < snowflake_1.length; _i++) {
-    var other = snowflake_1[_i];
-    other.draw();
+  for (var i = 0; i < (settings.rotate ? 6 : 1); i++) {
+    settings.rotate && _.rotate(2 * Math.PI / 6);
+    p.draw();
+
+    for (var _i = 0, snowflake_1 = snowflake; _i < snowflake_1.length; _i++) {
+      var other = snowflake_1[_i];
+      other.draw();
+    }
+
+    _.push();
+
+    _.scale(1, -1);
+
+    p.draw();
+
+    for (var _a = 0, snowflake_2 = snowflake; _a < snowflake_2.length; _a++) {
+      var other = snowflake_2[_a];
+      other.draw();
+    }
+
+    _.pop();
   }
 };
 },{"p5":"../node_modules/p5/lib/p5.min.js","./Particle":"snowflakes/Particle.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
