@@ -1,7 +1,7 @@
 import p5 from "p5";
 import Ball from "./Ball";
 
-const g = 0.2; // instead of 9.81m/s^2
+// const g = 0.2; // instead of 9.81m/s^2
 
 const _ = new p5(() => {});
 
