@@ -1,0 +1,1 @@
+{"version":3,"sources":["style.scss"],"names":[],"mappings":"AAAA,KACE,wBAAA,CACA,UAAA,CACA,sDAGF,OACE","file":"style.5bbccb70.css","sourceRoot":"../src","sourcesContent":["body {\n  background-color: rgb(32, 32, 32);\n  color: white;\n  font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\n}\n\ncanvas {\n  border: 1px solid white;\n}\n"]}
