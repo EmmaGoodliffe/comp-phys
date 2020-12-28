@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Computational Physics</title>
+    <link rel="stylesheet" href="./style.scss" />
+    <style>
+      main {
+        margin: 0 auto;
+        width: 90vw;
+      }
+      h1 {
+        margin: 2rem auto;
+        width: fit-content;
+        text-align: center;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      nav ul {
+        padding: 0;
+        list-style: none;
+      }
+      nav ul li {
+        margin: 0.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        background-color: #333;
+      }
+      nav ul li:hover {
+        transform: translateX(-10px);
+        background-color: #444;
+        transition: 0.1s;
+      }
+      nav ul li .description {
+        padding: 1rem;
+      }
+      nav ul li .description a {
+        font-weight: 700;
+      }
+      nav ul li .arrow {
+        width: 15%;
+      }
+      nav ul li .arrow a {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      nav ul li .arrow a:hover {
+        background-color: #555;
+        transition: 0.2s;
+      }
+      nav ul li .arrow a svg {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Computational Physics Projects</h1>
+      <nav><ul></ul></nav>
+    </main>
+    <script src="./index.ts"></script>
+  </body>
+</html>

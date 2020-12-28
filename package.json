@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Computational Physics",
   "scripts": {
-    "build": "npx rimraf dist && parcel build \"src/**/*.{html,png}\" --public-url \"/comp-phys/dist\"",
+    "build": "rimraf dist && parcel build \"src/**/*.{html,png}\" --public-url \"/comp-phys/dist\" --no-source-maps",
     "dev": "parcel serve \"src/**/*.{html,png}\"",
     "eslint:fix": "npm run eslint -- --fix",
     "eslint": "eslint \"src/**/*.ts\"",
@@ -32,6 +32,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "parcel-bundler": "^1.12.4",
     "prettier": "^2.1.2",
+    "rimraf": "^3.0.2",
     "sass": "^1.29.0",
     "typescript": "^4.0.3"
   },
