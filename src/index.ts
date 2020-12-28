@@ -10,7 +10,7 @@ const getLi = (title: string, description: string, colour: string) => {
     <p>${description}</p>
   </div>
   <div class="arrow">
-    <a href="collisions">
+    <a href="${url}">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
