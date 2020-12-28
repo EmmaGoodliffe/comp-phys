@@ -1,16 +1,22 @@
+import sketches from "./sketches.json";
+
 const colour = "white";
 const ul = document.querySelector("ul");
 
-const getLi = (title: string, description: string, colour: string) => {
-  const url = title.toLowerCase();
-  return `
-<li>
+const getLi = (
+  title: string,
+  url: string,
+  description: string,
+  colour: string,
+  classes = "",
+) => `
+<li class="${classes}">
   <div class="description">
     <a href="${url}">${title}</a>
     <p>${description}</p>
   </div>
   <div class="arrow">
-    <a href="${url}">
+    <a href="${url}" target="_blank">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
@@ -24,7 +30,6 @@ const getLi = (title: string, description: string, colour: string) => {
   </div>
 </li>
 `;
-};
 
 const data: Record<string, string> = {
   Collisions: "Colliding blocks produce &pi;",
@@ -33,10 +38,33 @@ const data: Record<string, string> = {
   Snowflakes: "Brownian trees generate snowflakes",
 };
 
-for (const title in data) {
-  const description = data[title];
-  const li = getLi(title, description, colour);
-  if (ul) {
-    ul.innerHTML += li;
+const run = async () => {
+  for (const title in data) {
+    const url = title.toLowerCase();
+    const description = data[title];
+    const li = getLi(title, url, description, colour);
+    if (ul) {
+      ul.innerHTML += li;
+    }
   }
-}
+  for (const sketch of sketches) {
+    const title = sketch.name;
+    const url = `https://editor.p5js.org/EmmaG/sketches/${sketch.id}`;
+    const issueNumberHash = title.split(" ").filter(word => word[0] === "#")[0];
+    const issueNumber = issueNumberHash && parseInt(issueNumberHash.slice(1));
+    const gitHubUrl = `https://github.com/ml5js/ml5-library/issues/${issueNumber}`;
+    let description = "<em>p5</em>";
+    const isMl5 = title.toLowerCase().includes("ml5");
+    let classes = "p5";
+    if (isMl5) {
+      description = `<em>ml5 demo for <a href="${gitHubUrl}">#${issueNumber}</a></em>`;
+      classes = "ml5";
+    }
+    const li = getLi(title, url, description, colour, classes);
+    if (ul) {
+      ul.innerHTML += li;
+    }
+  }
+};
+
+run().catch(console.error);
